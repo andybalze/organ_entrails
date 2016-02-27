@@ -122,7 +122,14 @@ def lootBodies():
             clearScreen()
             if (str.upper(equip) == "Y"):
                 inventory[foundItem] += 1
-                print ("Inventory: " + str(inventory))
+                print("Inventory:\n==========")
+                i = 1
+                invArray = []
+                for item in inventory:
+                    if(inventory[item] > 0):
+                        print (str(i) + ") " + item + ": " + str(inventory[item]))
+                        invArray.append(item)
+                        i = i + 1
 
 def leaveCity():
     global cities
