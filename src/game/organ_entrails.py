@@ -1,6 +1,6 @@
 #!/usr/bin python
 
-import random
+import random,os,sys
 
 __author__ = 'andrewjohnson'
 
@@ -50,6 +50,7 @@ def fightZombies(zombies):
     if zombies != 0:
         print(str(zombies) + " zombies stagger towards you. Ready your " + str.lower(myWeapons[0]) + "!\n")
         attack = raw_input("Attack, or Run? (A for attack, R for run)\n")
+        clearScreen()
         if (str.upper(attack) != "A"):
             hit = (hitMultiplier[random.randrange(0, len(hitMultiplier))]*weapon[myWeapons[0]]) - zombies
             print(str(hit))
@@ -72,6 +73,7 @@ def lootHouse():
     global life
     runAway = False
     loot = raw_input("Loot house? (Y/N)\n")
+    clearScreen()
     if(str.upper(loot) == "Y"):
         foundItem = supplies[random.randrange(0, len(supplies)-1)]
         foundWeapon = weapon.keys()[random.randrange(1, len(weapon)-1)]
@@ -79,6 +81,7 @@ def lootHouse():
         print(str(zombies) + " zombies found in house.")
         if zombies != 0:
             attack = raw_input("Attack or Run? (A/R)\n")
+            clearScreen()
             if str.upper(attack) == "A":
                 hit = zombies-1 * (hitMultiplier[random.randrange(0, len(hitMultiplier)-4)])
                 life = life - hit
@@ -90,7 +93,9 @@ def lootHouse():
             print ("The house is empty of zombies, but full of cool stuff...")
         if (runAway != True):
             takeItem = raw_input("You found a " + foundItem + "\nEquip? (Y/N)")
+            clearScreen()
             takeWeapon = raw_input("Cool! You found a " + foundWeapon + "\nEquip? (Y/N)")
+            clearScreen()
             if str.upper(takeWeapon) == "Y": myWeapons.insert(0, foundWeapon)
             if str.upper(takeItem) == "Y": inventory[foundItem] += 1
             print ("Current weapon: " + str(myWeapons[0]))
@@ -103,6 +108,7 @@ def lootHouse():
 
 def lootBodies():
     loot = raw_input("Would you like to loot the bodies? (Y/N)\n")
+    clearScreen()
     if (str.upper(loot) == "Y"):
         if (random.randrange(0,9)>8):
             print("A zombie was not yet dead!\n")
@@ -113,6 +119,7 @@ def lootBodies():
             foundItem = supplies[random.randrange(0, len(supplies)-1)]
             print("You found a " + foundItem)
             equip = raw_input("Equip? (Y/N)")
+            clearScreen()
             if (str.upper(equip) == "Y"):
                 inventory[foundItem] += 1
                 print ("Inventory: " + str(inventory))
@@ -128,6 +135,7 @@ def leaveCity():
             whereTo = whereTo + "   " + str(i) + ") " + city + "\n"
             i = i + 1
     cityIndex =  int(raw_input("I want to go to: " + "\n" + whereTo))
+    clearScreen()
     youAreHere = cityIndex
     print("Welcome to " + cities[youAreHere])
 
@@ -146,6 +154,7 @@ def checkInventory():
             i = i + 1
     print str(i) + ") Exit Inventory"
     inventoryIndex = int(raw_input("Select the item from the list.\n"))-1
+    clearScreen()
     if inventoryIndex != len(invArray):
         myItem = invArray[inventoryIndex]
         if myItem == "Candy Bar":
@@ -162,17 +171,24 @@ def changeWeapon():
         print str(i) + ") " + weapon
         i += 1
     equip = int(raw_input("Equip:\n"))-1
+    clearScreen()
     w = myWeapons.pop(equip)
     myWeapons.insert(0, w)
 
     print myWeapons[0] + " is equipped.\n"
 
+def clearScreen():
+    if sys.platform=='win32':
+        os.system("cls")  # for Windows
+
+    if sys.platform=='linux2':
+        os.system("clear")  # for Linux/OS X
 
 print (welcome)
 print ("\nLook, a small horde of zombies approaches! Take this crowbar and go bash some heads!")
 
 ready = raw_input("Ready to fight?\n")
-
+clearScreen()
 if (str.upper(ready) != "Y"):
     print "Too bad, this is Zombietown. You better get ready.\n"
 else:
@@ -191,6 +207,7 @@ life = 20
 while (life > 0):
     print("Life: " + str(life))
     action = raw_input("What would you like to do now?\n1)Find more zombies\n2)Loot more houses\n3)Leave the city\n4)Check inventory\n5)Change Weapon\n\n")
+    clearScreen()
     if (action == "1"):
 
         fightZombies(random.randrange(0,10))
