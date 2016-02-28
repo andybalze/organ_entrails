@@ -177,8 +177,14 @@ def changeWeapon():
     for weapon in myWeapons:
         print str(i) + ") " + weapon
         i += 1
+    print str(i) + ") Choose Random Weapon"
     equip = int(raw_input("Equip:\n"))-1
     clearScreen()
+    if equip == i-1:
+        if len(myWeapons) == 1:
+            equip = 0
+        elif len(myWeapons) != 1:
+            equip = random.randrange(1, len(myWeapons)-1)-1
     w = myWeapons.pop(equip)
     myWeapons.insert(0, w)
 
