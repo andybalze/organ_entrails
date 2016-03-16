@@ -1,6 +1,6 @@
 #!/usr/bin python
 
-import random,os,sys
+import random
 
 __author__ = 'andrewjohnson'
 
@@ -49,9 +49,8 @@ def fightZombies(zombies):
     global life
     if zombies != 0:
         print(str(zombies) + " zombies stagger towards you. Ready your " + str.lower(myWeapons[0]) + "!\n")
-        attack = raw_input("Attack, or Run? (A for attack, R for run)\n")
-        clearScreen()
-        if (str.upper(attack) != "A"):
+        attack = promptForInput("Attack, or Run? (A for attack, R for run)")
+        if (attack):
             hit = (hitMultiplier[random.randrange(0, len(hitMultiplier))]*weapon[myWeapons[0]]) - zombies
             print(str(hit))
             if hit > 0:
@@ -61,7 +60,7 @@ def fightZombies(zombies):
             else:
                 print(str(zombies) + " zombies ravaged you. Your life health is now " + str(life))
     elif zombies == 0:
-         print ("The zombies have fled because of your presence")
+         print ("But Nobody Came!")
     else:
         hit = (hitMultiplier[random.randrange(0, len(hitMultiplier))]*weapon[myWeapons[0]]) - zombies
         if hit > 0:
@@ -72,17 +71,15 @@ def fightZombies(zombies):
 def lootHouse():
     global life
     runAway = False
-    loot = raw_input("Loot house? (Y/N)\n")
-    clearScreen()
-    if(str.upper(loot) == "Y"):
+    loot = promptForInput("Loot house? (Y/N)")
+    if(loot):
         foundItem = supplies[random.randrange(0, len(supplies)-1)]
         foundWeapon = weapon.keys()[random.randrange(1, len(weapon)-1)]
         zombies = random.randrange(0, 4)
         print(str(zombies) + " zombies found in house.")
         if zombies != 0:
-            attack = raw_input("Attack or Run? (A/R)\n")
-            clearScreen()
-            if str.upper(attack) == "A":
+            attack = promptForInput("Attack or Run? (A/R)")
+            if (attack):
                 hit = zombies-1 * (hitMultiplier[random.randrange(0, len(hitMultiplier)-4)])
                 life = life - hit
                 print (str(zombies) + " attack you.\n" "Life health is now " + str(life))
@@ -92,12 +89,9 @@ def lootHouse():
         else:
             print ("The house is empty of zombies, but full of cool stuff...")
         if (runAway != True):
-            takeItem = raw_input("You found a " + foundItem + "\nEquip? (Y/N)")
-            clearScreen()
-            takeWeapon = raw_input("Cool! You found a " + foundWeapon + "\nEquip? (Y/N)")
-            clearScreen()
-            if str.upper(takeWeapon) == "Y": myWeapons.insert(0, foundWeapon)
-            if str.upper(takeItem) == "Y": inventory[foundItem] += 1
+            takeItem = promptForInput("Cool! You found a " + foundWeapon + "\nEquip? (Y/N)")
+            if (takeWeapon): myWeapons.insert(0, foundWeapon)
+            if (takeItem): inventory[foundItem] += 1
             print ("Current weapon: " + str(myWeapons[0]))
             print ("Destruction power: " + str(weapon[myWeapons[0]]))
             print("Inventory:\n==========")
@@ -107,9 +101,8 @@ def lootHouse():
             print("\n")
 
 def lootBodies():
-    loot = raw_input("Would you like to loot the bodies? (Y/N)\n")
-    clearScreen()
-    if (str.upper(loot) == "Y"):
+    loot = promptForInput("Would you like to loot the bodies? (Y/N)")
+    if (loot):
         if (random.randrange(0,9)>8):
             print("A zombie was not yet dead!\n")
             hit = 1 * hitMultiplier[random.randrange(0, len(hitMultiplier))]
@@ -118,18 +111,10 @@ def lootBodies():
         else:
             foundItem = supplies[random.randrange(0, len(supplies)-1)]
             print("You found a " + foundItem)
-            equip = raw_input("Equip? (Y/N)")
-            clearScreen()
-            if (str.upper(equip) == "Y"):
+            equip = promptForInput("Equip? (Y/N)")
+            if (equip):
                 inventory[foundItem] += 1
-                print("Inventory:\n==========")
-                i = 1
-                invArray = []
-                for item in inventory:
-                    if(inventory[item] > 0):
-                        print (str(i) + ") " + item + ": " + str(inventory[item]))
-                        invArray.append(item)
-                        i = i + 1
+                print ("Inventory: " + str(inventory))
 
 def leaveCity():
     global cities
@@ -142,7 +127,6 @@ def leaveCity():
             whereTo = whereTo + "   " + str(i) + ") " + city + "\n"
             i = i + 1
     cityIndex =  int(raw_input("I want to go to: " + "\n" + whereTo))
-    clearScreen()
     youAreHere = cityIndex
     print("Welcome to " + cities[youAreHere])
 
@@ -161,7 +145,6 @@ def checkInventory():
             i = i + 1
     print str(i) + ") Exit Inventory"
     inventoryIndex = int(raw_input("Select the item from the list.\n"))-1
-    clearScreen()
     if inventoryIndex != len(invArray):
         myItem = invArray[inventoryIndex]
         if myItem == "Candy Bar":
@@ -177,35 +160,33 @@ def changeWeapon():
     for weapon in myWeapons:
         print str(i) + ") " + weapon
         i += 1
-    print str(i) + ") Choose Random Weapon"
     equip = int(raw_input("Equip:\n"))-1
-    clearScreen()
-    if equip == i-1:
-        if len(myWeapons) == 1:
-            equip = 0
-        elif len(myWeapons) != 1:
-            equip = random.randrange(1, len(myWeapons)-1)-1
     w = myWeapons.pop(equip)
     myWeapons.insert(0, w)
 
     print myWeapons[0] + " is equipped.\n"
 
-def clearScreen():
-    if sys.platform=='win32':
-        os.system("cls")  # for Windows
+#Prompt for Y\N input give out bool value; prompt again if invalid value is given
+def promptForInput(display):
+    decision = raw_input(display + "\n").upper()
+    if (decision == "ATTACK") or (decision == "A") or (decision == "YES") or (decision == "Y") or (decision == "TRUE") or (decision == "T"):
+        return True
+    elif (decision == "RUN") or (decision == "R") or (decision == "NO") or (decision == "N") or (decision == "FALSE") or (decision == "F") :
+        return False
+    else:
+        print("Invalid Selection")
+        promptForInput(display)
 
-    if sys.platform=='linux2':
-        os.system("clear")  # for Linux/OS X
 
 print (welcome)
 print ("\nLook, a small horde of zombies approaches! Take this crowbar and go bash some heads!")
 
-ready = raw_input("Ready to fight?\n")
-clearScreen()
-if (str.upper(ready) != "Y"):
-    print "Too bad, this is Zombietown. You better get ready.\n"
-else:
+ready = promptForInput("Ready to Fight?")
+
+if (ready):
     print "Lock and load!\n"
+else:
+    print "Too bad, this is Zombietown. You better get ready.\n"
 
 fightZombies(3)
 lootBodies()
@@ -220,7 +201,6 @@ life = 20
 while (life > 0):
     print("Life: " + str(life))
     action = raw_input("What would you like to do now?\n1)Find more zombies\n2)Loot more houses\n3)Leave the city\n4)Check inventory\n5)Change Weapon\n\n")
-    clearScreen()
     if (action == "1"):
 
         fightZombies(random.randrange(0,10))
